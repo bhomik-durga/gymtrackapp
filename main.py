@@ -1,11 +1,3 @@
-"""
-GymTracker
-Colour theme: coolors.co/palette/dcdcdd-c5c3c6-46494c-4c5c68-1985a1
-Stores data : ~/Desktop/gym_workouts.csv
-
-Install : pip install pandas matplotlib reportlab
-Run     : python gym_tracker.py
-"""
 
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
@@ -30,14 +22,9 @@ from reportlab.platypus import (
 )
 from reportlab.platypus.flowables import KeepTogether
 
-# ──────────────────────────────────────────────────────────
-#  DATA FILE
-# ──────────────────────────────────────────────────────────
+
 DATA_FILE = os.path.join(pathlib.Path.home(), "Desktop", "gym_workouts.csv")
 
-# ──────────────────────────────────────────────────────────
-#  COLOUR PALETTE  — coolors.co/palette/dcdcdd-c5c3c6-46494c-4c5c68-1985a1
-# ──────────────────────────────────────────────────────────
 BG        = "#DCDCDD"   # light silver        — page / root bg
 SIDEBAR   = "#46494C"   # dark charcoal       — sidebar fill
 SURFACE   = "#FFFFFF"   # white               — card surfaces
@@ -62,7 +49,6 @@ WARN_BG   = "#FEF4DC"   # light amber bg
 DANGER    = "#9B2B2B"   # red   — delete / errors
 DANGER_BG = "#FDEAEA"   # light red bg
 
-# Chart colours — distinct, readable on white
 CHART_COLS = [
     "#1985A1",  # teal
     "#E07B39",  # orange
@@ -98,7 +84,7 @@ DEFAULT_EXERCISES = [
     "Push Ups", "Plank",
 ]
 
-# ── Muscle-group mapping ───────────────────────────────────
+
 MUSCLE_MAP = {
     "Machine Chest Press":      "Chest",
     "Flat Dumbbell Press":      "Chest",
@@ -136,9 +122,6 @@ def epley_1rm(weight: float, reps: int) -> float:
     return weight * (1 + reps / 30)
 
 
-# ══════════════════════════════════════════════════════════
-#  DATA LAYER
-# ══════════════════════════════════════════════════════════
 class WorkoutData:
     COLS = ["date", "exercise", "sets", "reps", "weight"]
 
@@ -234,11 +217,7 @@ class WorkoutData:
         self._init_file()
 
 
-# ══════════════════════════════════════════════════════════
-#  PDF EXPORT ENGINE
-# ══════════════════════════════════════════════════════════
 
-# Hex → reportlab Color
 def _rl(hex_str):
     h = hex_str.lstrip("#")
     return colors.HexColor(f"#{h}")
@@ -255,7 +234,7 @@ class PdfExporter:
       5. Progress chart image (matplotlib figure exported to PNG bytes)
     """
 
-    # Palette matched to app colours
+   
     C_TEAL     = _rl("#1985A1")
     C_SLATE    = _rl("#4C5C68")
     C_SILVER   = _rl("#DCDCDD")
@@ -271,7 +250,7 @@ class PdfExporter:
     def __init__(self, db: "WorkoutData"):
         self.db = db
 
-    # ── Public entry point ──────────────────────────────
+   
     def export(self, out_path: str, fig=None,
                date_from: date = None, date_to: date = None):
         """
@@ -300,7 +279,6 @@ class PdfExporter:
         # ── Cover banner ──────────────────────────────
         story += self._cover(styles, date_from, date_to, len(df_all))
 
-        # ── Personal Bests ────────────────────────────
         pbs = self.db.personal_bests()
         if pbs:
             story += self._section_header("🏆  Personal Bests", styles)
@@ -378,7 +356,6 @@ class PdfExporter:
     def _cover(self, styles, d_from, d_to, count):
         elems = []
 
-        # Teal banner rectangle via a 1-row table
         banner_data = [[Paragraph(
             '<font color="white"><b>💪  GymTracker — Workout Report</b></font>',
             ParagraphStyle("banner", fontSize=18, fontName="Helvetica-Bold",
